@@ -22,16 +22,15 @@ def filename(qwert):
     result = re.search("[0-9]+\S[0-9]+\.[0-9]+\.pdf", qwert)
     result = str(result.group(0)).split("/")
     print(result)
-    # try:
-    #     return result[1]
-    # except:
-    #     return result[0]
+    try:
+        return result[1]
+    except:
+        return result[0]
 
 
 # Сохранение pdf файлов
 def get_links():
     # Отправляем запрос
-    global link
     req = requests.get(
         "https://ciur.ru/ipek/SiteAssets/Forms/view.aspx?RootFolder=%2fipek%2fSiteAssets%2f01%2frz%2f2023%2f11&FolderCTID=0x01200045152E237CA79E41A0BCC98B202A0455",
         headers)
@@ -43,5 +42,4 @@ def get_links():
 
     # Ищем в HTML ссылки на загрузку .pdf
     links = list(set(re.findall("(/ipek/SiteAssets/[0-9]+/[A-Za-z]+/[0-9]+/[0-9]+/[0-9]+\S[0-9]+.[0-9]+\.pdf|/ipek/SiteAssets/[0-9]+/[A-Za-z]+/[0-9]+/[0-9]+/[0-9]+.[0-9]+\.pdf)", a)))
-    print(links)
     return links
