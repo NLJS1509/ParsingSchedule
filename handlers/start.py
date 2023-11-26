@@ -16,16 +16,13 @@ async def start(msg: types.Message):
 
 @dp.callback_query(F.data.startswith("schedule"))
 async def schedule_func(call: types.CallbackQuery):
+    links = get_link.get_links()
 
-
-    await call.message.edit_reply_markup()
-    # links = get_link.get_links()
-    #
-    # # Загружаем все pdf по найденным ссылкам
-    # for i in links:
-    #     file_name = get_link.filename(i)
-    #     link = f"https://ciur.ru/{i}"
-    #     urllib.request.urlretrieve(link, file_name)
-    #     document = FSInputFile(file_name)
-    #     await bot.send_document(msg.from_user.id, document)
-    #     os.remove(file_name)
+    # Загружаем все pdf по найденным ссылкам
+    for i in links:
+        file_name = get_link.filename(i)
+        link = f"https://ciur.ru/{i}"
+        urllib.request.urlretrieve(link, file_name)
+        document = FSInputFile(file_name)
+        await bot.send_document(call.from_user.id, document)
+        os.remove(file_name)

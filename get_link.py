@@ -1,7 +1,7 @@
-import urllib.request
-
 import re
 import requests
+import lxml
+from bs4 import BeautifulSoup
 
 # Обозначаем, что хотим получить HTML
 st_accept = "text/html"
@@ -20,25 +20,28 @@ headers = {
 # Генерируем filename из ссылки
 def filename(qwert):
     result = re.search("[0-9]+\S[0-9]+\.[0-9]+\.pdf", qwert)
-    result = str(result.group(0))
-    result = result.replace("/", ".")
-    return result
+    result = str(result.group(0)).split("/")
+    print(result)
+    # try:
+    #     return result[1]
+    # except:
+    #     return result[0]
 
 
 # Сохранение pdf файлов
 def get_links():
     # Отправляем запрос
-    req = requests.get("https://ciur.ru/ipek/DocLib61/Forms/AllItems.aspx", headers)
+    global link
+    req = requests.get(
+        "https://ciur.ru/ipek/SiteAssets/Forms/view.aspx?RootFolder=%2fipek%2fSiteAssets%2f01%2frz%2f2023%2f11&FolderCTID=0x01200045152E237CA79E41A0BCC98B202A0455",
+        headers)
 
     # Передаем HTML в переменную
     src = req.text
+    soup = BeautifulSoup(src, "lxml")
+    a = str(soup.find_all("div", class_="ms-vb itx"))
 
     # Ищем в HTML ссылки на загрузку .pdf
-    link1 = list(set(re.findall("/ipek/SiteAssets/[A-Za-z0-9]+/[A-Za-z0-9]+/[0-9]+/[0-9]+/[0-9]+.[0-9]+.pdf", src)))
-    link2 = list(
-        set(re.findall("/ipek/SiteAssets/[A-Za-z0-9]+/[A-Za-z0-9]+/[0-9]+/[0-9]+/[0-9]+\S[0-9]+.[0-9]+.pdf", src)))
-    links = link1 + link2
+    links = list(set(re.findall("(/ipek/SiteAssets/[0-9]+/[A-Za-z]+/[0-9]+/[0-9]+/[0-9]+\S[0-9]+.[0-9]+\.pdf|/ipek/SiteAssets/[0-9]+/[A-Za-z]+/[0-9]+/[0-9]+/[0-9]+.[0-9]+\.pdf)", a)))
     print(links)
     return links
-
-
